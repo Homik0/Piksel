@@ -117,19 +117,20 @@ public class Piksel extends JFrame {
                 int r = (rgb & 0x00ff0000) >>> 16;
                 int g = (rgb & 0x0000ff00) >>> 8;
                 int b = rgb & 0x000000ff;
-                gray=0.299*r + 0.587*g + 0.114*b;
-                r=(int) gray;
-                if(r>=130)
-                    r=255;
-                else r=0;
-                g=(int) gray;
-                if(g>=130)
-                    g=255;
-                else g=0;
-                b=(int) gray;
-                if(b>=130)
-                    b=255;
-                else b=0;
+                gray=r + g + b;
+                r=255-r;
+//                if(r>=130)
+//                    r=255;
+//                else r=0;
+                g=255-g;
+//                if(g>=130)
+//                    g=255;
+//                else g=0;
+                b=255-b;
+//                if(b>=130)
+//                    b=255;
+//                else b=0;
+                
 
  //tu można modyfikować wartość kanałów
                 //zapis kanałów
