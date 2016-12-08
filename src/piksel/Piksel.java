@@ -105,57 +105,37 @@ public class Piksel extends JFrame {
         contentPane.add(outputPanel, BorderLayout.SOUTH);
     }
 
+    private static int Pixel(BufferedImage img, int x, int y) {
+        int gray;
+        int rgb = img.getRGB(x, y);
+        int a = (rgb & 0xff000000) >>> 24;
+        int r = (rgb & 0x00ff0000) >>> 16;
+        int g = (rgb & 0x0000ff00) >>> 8;
+        int b = rgb & 0x000000ff;
+        gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
+        return gray;
+    }
+
     private static void Processing(BufferedImage img) {
         int w = img.getWidth(null);
         int h = img.getHeight(null);
-        double gray;
 
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                int rgb = img.getRGB(x, y);
-                int a = (rgb & 0xff000000) >>> 24;
-                int r = (rgb & 0x00ff0000) >>> 16;
-                int g = (rgb & 0x0000ff00) >>> 8;
-                int b = rgb & 0x000000ff;
-//                gray=r + g + b;
-                //Rozjasnianie
-//                r=(int)(r*1.1);
-//                if(r>=255)
-//                    r=255;
-//                else if(r<0)
-//                    r=0;          
-//                g=(int)(g*1.1);
-//                if(g>=255)
-//                    g=255;
-//                else if(g<0)
-//                    g=0;
-//                b=(int)(b*1.1);
-//                if(b>=255)
-//                    b=255;
-//                else if(b<0)
-//                    b=0;
-                //Przyciemnianie
-                r=(int)(r*0.8);
-                if(r>=255)
-                    r=255;
-                else if(r<0)
-                    r=0;          
-                g=(int)(g*0.8);
-                if(g>=255)
-                    g=255;
-                else if(g<0)
-                    g=0;
-                b=(int)(b*0.8);
-                if(b>=255)
-                    b=255;
-                else if(b<0)
-                    b=0;
- //tu można modyfikować wartość kanałów
-                //zapis kanałów
+                int a = 0;
+                int r = Pixel(img, x, y);
+                int g = Pixel(img, x, y);
+                int b = Pixel(img, x, y);
                 int RGB = b | (g << 8) | (r << 16) | (a << 24);
                 img.setRGB(x, y, RGB);
             }
         }
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                int g(x,y)=Pixel(img, x-1, y-1)+Pixel(img, x-1, y)+Pixel(img, x-1, y+1)+Pixel(img, x, y-1)+Pixel(img, x, y)+Pixel(img, x, y+1)+Pixel(img, x+1, y-1)+Pixel(img, x+1, y)+Pixel(img, x+1, y+1);
+            }
+        }
+
     }
 
     public static void main(String args[]) {
