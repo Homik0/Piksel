@@ -135,8 +135,8 @@ public class Piksel extends JFrame {
         int tempx = x - (maska.length / 2);
         int tempy = y - (maska[0].length / 2);
 
-        for (int i = 1; i < maska.length; i++) {
-            for (int j = 1; j < maska[0].length; j++) {
+        for (int i = 0; i < maska.length; i++) {
+            for (int j = 0; j < maska[0].length; j++) {
                 a += getPixel(img, tempx + i, tempy + j) * maska[i][j];
             }
         }
@@ -155,9 +155,9 @@ public class Piksel extends JFrame {
 
         BufferedImage temp = copyImage(img);
         int[][] maska = new int[][]{
-            {-1, -1, -1},
-            {-1, 8, -1},
-            {-1, -1, -1},};
+            {-5, 3, 3},
+            {-5, 0, 3},
+            {-5, 3, 3}};
 
         for (int x = 1; x < w-1; x++) {
             for (int y = 1; y < h-1; y++) {
