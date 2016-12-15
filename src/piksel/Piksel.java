@@ -105,10 +105,9 @@ public class Piksel extends JFrame {
         contentPane.add(outputPanel, BorderLayout.SOUTH);
     }
 
-    private static int Pixel(BufferedImage img, int x, int y) {
+    private static int getPixel(BufferedImage img, int x, int y) {
         int gray;
         int rgb = img.getRGB(x, y);
-        int a = (rgb & 0xff000000) >>> 24;
         int r = (rgb & 0x00ff0000) >>> 16;
         int g = (rgb & 0x0000ff00) >>> 8;
         int b = rgb & 0x000000ff;
@@ -116,23 +115,55 @@ public class Piksel extends JFrame {
         return gray;
     }
 
+    private static BufferedImage copyImage(BufferedImage source) {
+        BufferedImage b = new BufferedImage(source.getWidth(),
+                source.getHeight(), source.getType());
+        Graphics g = b.getGraphics();
+        g.drawImage(source, 0, 0, null);
+        g.dispose();
+        return b;
+    }
+
+    private static int filterPixel(BufferedImage img, int x, int y, int[][] maska) {
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+        if (x > w || y > h || x < 0 || y < 0) {
+            return 0;
+        }
+
+        int a = 0;
+        int tempx = x - (maska.length / 2);
+        int tempy = y - (maska[0].length / 2);
+
+        for (int i = 1; i < maska.length; i++) {
+            for (int j = 1; j < maska[0].length; j++) {
+                a += getPixel(img, tempx + i, tempy + j) * maska[i][j];
+            }
+        }
+        if (a > 255) {
+            return 255;
+        }
+        if (a < 0) {
+            return 0;
+        }
+        return a;
+    }
+
     private static void Processing(BufferedImage img) {
         int w = img.getWidth(null);
         int h = img.getHeight(null);
 
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                int a = 0;
-                int r = Pixel(img, x, y);
-                int g = Pixel(img, x, y);
-                int b = Pixel(img, x, y);
-                int RGB = b | (g << 8) | (r << 16) | (a << 24);
+        BufferedImage temp = copyImage(img);
+        int[][] maska = new int[][]{
+            {-1, -1, -1},
+            {-1, 8, -1},
+            {-1, -1, -1},};
+
+        for (int x = 1; x < w-1; x++) {
+            for (int y = 1; y < h-1; y++) {
+                int a = filterPixel(temp, x, y, maska);
+                int RGB = a | (a << 8) | (a << 16) | (a << 24);
                 img.setRGB(x, y, RGB);
-            }
-        }
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                int g(x,y)=Pixel(img, x-1, y-1)+Pixel(img, x-1, y)+Pixel(img, x-1, y+1)+Pixel(img, x, y-1)+Pixel(img, x, y)+Pixel(img, x, y+1)+Pixel(img, x+1, y-1)+Pixel(img, x+1, y)+Pixel(img, x+1, y+1);
             }
         }
 
