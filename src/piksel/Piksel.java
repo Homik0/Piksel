@@ -14,6 +14,8 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 import java.io.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.round;
 import java.net.*;
 import javax.imageio.*;
 
@@ -115,6 +117,42 @@ public class Piksel extends JFrame {
         return gray;
     }
 
+    private static int getY(int r, int g, int b) {
+        int y1;
+        y1 = (int) (0.299 * r + 0.587 * g + 0.114 * b);
+        return y1;
+    }
+
+    private static int getU(int r, int g, int b) {
+        int u;
+        u = (int) (-0.147 * r - 0.289 * g + 0.436 * b);
+        return u;
+    }
+
+    private static int getV(int r, int g, int b) {
+        int v;
+        v = (int) (0.615 * r - 0.515 * g - 0.100 * b);
+        return v;
+    }
+
+    private static double yY(int Y, double alfa) {
+        double y;
+        y = (int) round(Y / (25.5 + alfa));
+        return y;
+    }
+
+    private static double uU(int U, double alfa) {
+        double u;
+        u = (int) round((U + 111.18) / (22.236 + alfa));
+        return u;
+    }
+
+    private static double vV(int V, double alfa) {
+        double v;
+        v = (int) round((V + 156.825) / (31.365 + alfa));
+        return v;
+    }
+
     private static BufferedImage copyImage(BufferedImage source) {
         BufferedImage b = new BufferedImage(source.getWidth(),
                 source.getHeight(), source.getType());
@@ -150,26 +188,52 @@ public class Piksel extends JFrame {
     }
 
     private static void Processing(BufferedImage img) {
+//        int w = img.getWidth(null);
+//        int h = img.getHeight(null);
+//
+//        BufferedImage temp = copyImage(img);
+//        int[][] maska = new int[][]{
+//            {-5, 3, 3},
+//            {-5, 0, 3},
+//            {-5, 3, 3}};
+//
+//        for (int x = 1; x < w - 1; x++) {
+//            for (int y = 1; y < h - 1; y++) {
+//                int a = filterPixel(temp, x, y, maska);
+//                int RGB = a | (a << 8) | (a << 16) | (a << 24);
+//                img.setRGB(x, y, RGB);
+//            }
+//        }
         int w = img.getWidth(null);
         int h = img.getHeight(null);
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                int rgb = img.getRGB(x, y);
+                int a = (rgb & 0xff000000) >>> 24;
+                int r = (rgb & 0x00ff0000) >>> 16;
+                int g = (rgb & 0x0000ff00) >>> 8;
+                int b = rgb & 0x000000ff;
+                int rr=121;
+                int gg=67;
+                int bb=116;
+                int RGB=0;
+                double alfa=1;
+                if ((yY(getY(r,g,b),alfa)==yY(getY(rr,gg,bb),alfa))&&
+                        (uU(getU(r,g,b),alfa)==uU(getU(rr,gg,bb),alfa))&&
+                        (vV(getV(r,g,b),alfa)==vV(getV(rr,gg,bb),alfa)))
+                  
 
-        BufferedImage temp = copyImage(img);
-        int[][] maska = new int[][]{
-            {-5, 3, 3},
-            {-5, 0, 3},
-            {-5, 3, 3}};
-
-        for (int x = 1; x < w-1; x++) {
-            for (int y = 1; y < h-1; y++) {
-                int a = filterPixel(temp, x, y, maska);
-                int RGB = a | (a << 8) | (a << 16) | (a << 24);
+ //tu można modyfikować wartość kanałów
+                //zapis kanałów
+                RGB = b | (g << 8) | (r << 16) | (a << 24);
                 img.setRGB(x, y, RGB);
             }
         }
+    
 
-    }
+}
 
-    public static void main(String args[]) {
+public static void main(String args[]) {
         JFrame frame = new Piksel();
         frame.pack();
         frame.show();
